@@ -15,17 +15,6 @@ var firebaseConfig = {
   };
   firebase.initializeApp(firebaseConfig);
   var database = firebase.database();
-  var connectionsRef = database.ref("/connections");
-  var connectedRef = database.ref(".info/connected");
-  connectedRef.on("value", function(snap) {
-
-    if (snap.val()) {
-  
-      var con = connectionsRef.push(true);
-  
-      con.onDisconnect().remove();
-    }
-  });
 $("#submit").on("click", function(){
     event.preventDefault();
     name = $("#name").val();
@@ -54,23 +43,48 @@ $("#submit").on("click", function(){
         nexttime = moment(firsttime, "hh:mm A").format("hh:mm A");
         console.log(nexttime);
     }
-    var row = $("<tr>");
-    database.ref().push({
+    var newTrain = {
         name: name,
         dest: dest,
         nexttime: nexttime,
         freq: freq,
         tdminutestill: tdminutestill
-    });
-    row.append("<td>"+name+"</td>");
-    row.append("<td>"+dest+"</td>");
-    row.append("<td>"+freq+"</td>");
-    row.append("<td>"+nexttime+"</td>");
-    row.append("<td>"+tdminutestill+"</td>");
-    $("#table").append(row);
+    };
+    database.ref().push(newTrain);
     $("#table").append()
     $("#name").val("");
     $("#dest").val("");
     $("#firsttime").val("");
     $("#frequency").val("");
 });
+database.ref().on("child_added", function(childSnapshot) {
+
+    // Print the initial data to the console.
+    console.log(childSnapshot.val());
+
+    var empName = childSnapshot.val().name;
+    var empDest = childSnapshot.val().dest;
+    var empNext = childSnapshot.val().nexttime;
+    var empFreq = childSnapshot.val().freq;
+    var empStill = childSnapshot.val().tdminutestill;
+
+    // Log the value of the various properties
+    console.log(empName);
+    console.log(empDest);
+    console.log(empNext);
+    console.log(empFreq);
+    console.log(empStill);
+
+    // Change the HTML
+    var row = $("<tr>");
+    row.append("<td>"+empName+"</td>");
+    row.append("<td>"+empDest+"</td>");
+    row.append("<td>"+empFreq+"</td>");
+    row.append("<td>"+empNext+"</td>");
+    row.append("<td>"+empStill+"</td>");
+    $("#table").append(row);
+
+    // If any errors are experienced, log them to console.
+  }, function(errorObject) {
+    console.log("The read failed: " + errorObject.code);
+  });
