@@ -4,8 +4,9 @@ var firsttime;
 var freq;
 var tdnt;
 var nexttime;
+var secret = apikeys.SECRETAPI;
 var firebaseConfig = {
-    apiKey: "AIzaSyCBGDxJy0k7tWA0YgG1fA7FMlPX94J_8g8",
+    apiKey: secret,
     authDomain: "trainscheduler-4ef21.firebaseapp.com",
     databaseURL: "https://trainscheduler-4ef21.firebaseio.com",
     projectId: "trainscheduler-4ef21",
